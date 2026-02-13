@@ -2,23 +2,23 @@ package service
 
 import "cloud-app-api/internal/repository"
 
-type ItemService struct {
-	repo *repository.MemoryRepo
+type Repo interface {
+	CreateItem(name string) repository.Item
+	ListItems() []repository.Item
 }
 
-func NewItemService(r *repository.MemoryRepo) *ItemService {
+type ItemService struct {
+	repo Repo
+}
+
+func NewItemService(r Repo) *ItemService {
 	return &ItemService{repo: r}
 }
 
 func (s *ItemService) CreateItem(name string) repository.Item {
-	item := repository.Item{
-		ID:   len(s.repo.GetAll()) + 1,
-		Name: name,
-	}
-	s.repo.Save(item)
-	return item
+	return s.repo.CreateItem(name)
 }
 
 func (s *ItemService) ListItems() []repository.Item {
-	return s.repo.GetAll()
+	return s.repo.ListItems()
 }
