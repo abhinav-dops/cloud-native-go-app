@@ -6,17 +6,25 @@ import (
 	"cloud-app-api/internal/service"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
 
-	repo := repository.NewMemoryRepo()
+	conn := os.Getenv("DB_CONN")
+
+	repo, err := repository.NewPostgresRepo(conn)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	svc := service.NewItemService(repo)
 	h := handler.NewItemHandler(svc)
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/items", h.Items)
 
-	log.Println("Server running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", mux))
+	log.Println("Server running on :8081")
+	log.Fatal(http.ListenAndServe(":8081", mux))
+
 }
