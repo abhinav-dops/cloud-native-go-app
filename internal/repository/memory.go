@@ -1,9 +1,9 @@
 package repository
 
-type Item struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
+// type Item struct {
+// 	ID   int    `json:"id"`
+// 	Name string `json:"name"`
+// }
 
 type MemoryRepo struct {
 	items []Item
