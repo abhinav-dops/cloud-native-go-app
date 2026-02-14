@@ -7,14 +7,30 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 )
 
 func main() {
 
 	conn := os.Getenv("DB_CONN")
 
-	repo, err := repository.NewPostgresRepo(conn)
+	var repo *repository.PostgresRepo
+	var err error
+
+	for i := 0; i < 10; i++ {
+		repo, err = repository.NewPostgresRepo(conn)
+		if err == nil {
+			break
+		}
+		log.Println("waiting for database...")
+		time.Sleep(2 * time.Second)
+	}
+
 	if err != nil {
+		log.Fatal("Databse not ready", err)
+	}
+
+	if err := repo.Init(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -23,6 +39,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/items", h.Items)
+	mux.HandleFunc("/health", handler.Health)
 
 	log.Println("Server running on :8081")
 	log.Fatal(http.ListenAndServe(":8081", mux))
