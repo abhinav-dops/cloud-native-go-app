@@ -2,12 +2,19 @@ package repository
 
 import (
 	"database/sql"
+	"time"
 
 	_ "github.com/lib/pq"
 )
 
 type PostgresRepo struct {
 	db *sql.DB
+}
+
+type Item struct {
+	ID        int       `json:"id"`
+	Name      string    `json:"name"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func NewPostgresRepo(conn string) (*PostgresRepo, error) {
@@ -34,23 +41,35 @@ func (r *PostgresRepo) init() {
 }
 
 func (r *PostgresRepo) CreateItem(name string) Item {
-	var id int
-	r.db.QueryRow(
-		"INSERT INTO items (name) VALUES ($1) RETURNING id",
-		name,
-	).Scan(&id)
-	return Item{ID: id, Name: name}
+	var item Item
+
+	query := `
+	INSERT INTO items (name)
+	VALUES ($1)
+	RETURNING id, name, created_at
+	`
+
+	r.db.QueryRow(query, name).Scan(
+		&item.ID,
+		&item.Name,
+		&item.CreatedAt,
+	)
+
+	return item
 }
 
 func (r *PostgresRepo) ListItems() []Item {
-	rows, _ := r.db.Query("SELECT id, name FROM items")
+	rows, _ := r.db.Query(
+		"SELECT id, name, created_at FROM items ORDER BY id",
+	)
+	defer rows.Close()
 
 	var items []Item
 
 	for rows.Next() {
-		var i Item
-		rows.Scan(&i.ID, &i.Name)
-		items = append(items, i)
+		var item Item
+		rows.Scan(&item.ID, &item.Name, &item.CreatedAt)
+		items = append(items, item)
 	}
 
 	return items
@@ -90,4 +109,16 @@ func (r *PostgresRepo) GetItems() ([]string, error) {
 	}
 
 	return items, nil
+}
+
+func (r *PostgresRepo) Init() error {
+	query := `
+	CREATE TABLE IF NOT EXISTS items (
+		id SERIAL PRIMARY KEY,
+		name TEXT NOT NULL,
+		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	);
+	`
+	_, err := r.db.Exec(query)
+	return err
 }
