@@ -2,6 +2,7 @@ package main
 
 import (
 	"cloud-app-api/internal/handler"
+	"cloud-app-api/internal/middleware"
 	"cloud-app-api/internal/repository"
 	"cloud-app-api/internal/service"
 	"log"
@@ -42,6 +43,7 @@ func main() {
 	mux.HandleFunc("/health", handler.Health)
 
 	log.Println("Server running on :8081")
-	log.Fatal(http.ListenAndServe(":8081", mux))
+	loggedMux := middleware.Logger(mux)
+	log.Fatal(http.ListenAndServe(":8081", loggedMux))
 
 }
