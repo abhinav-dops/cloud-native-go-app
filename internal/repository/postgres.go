@@ -16,10 +16,12 @@ func NewPostgresRepo(conn string) (*PostgresRepo, error) {
 		return nil, err
 	}
 
-	r := &PostgresRepo{db: db}
-	r.init()
+	repo := &PostgresRepo{db: db}
+	if err := repo.InitSchema(); err != nil {
+		return nil, err
+	}
 
-	return r, nil
+	return repo, nil
 }
 
 func (r *PostgresRepo) init() {
@@ -52,4 +54,40 @@ func (r *PostgresRepo) ListItems() []Item {
 	}
 
 	return items
+}
+
+func (r *PostgresRepo) InitSchema() error {
+	query := `
+	CREATE TABLE IF NOT EXISTS items (
+		id SERIAL PRIMARY KEY,
+		name TEXT NOT NULL
+	)
+	`
+	_, err := r.db.Exec(query)
+	return err
+}
+
+func (r *PostgresRepo) AddItem(name string) error {
+	_, err := r.db.Exec("INSERT INTO items (name) VALUES ($1)", name)
+	return err
+}
+
+func (r *PostgresRepo) GetItems() ([]string, error) {
+	rows, err := r.db.Query("SELECT name FROM items")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var items []string
+
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			return nil, err
+		}
+		items = append(items, name)
+	}
+
+	return items, nil
 }
