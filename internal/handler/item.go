@@ -2,7 +2,6 @@ package handler
 
 import (
 	"cloud-app-api/internal/service"
-	"encoding/json"
 	"net/http"
 )
 
@@ -19,30 +18,46 @@ func (h *ItemHandler) Items(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 
 	case http.MethodPost:
-
 		name := r.URL.Query().Get("name")
 		if name == "" {
-			http.Error(w, "missing name", 400)
+			writeJSON(w, http.StatusBadRequest, APIResponse{
+				Status: "error",
+				Error:  "missing name",
+			})
 			return
 		}
 
 		if err := h.svc.Add(name); err != nil {
-			http.Error(w, err.Error(), 500)
+			writeJSON(w, 500, APIResponse{
+				Status: "error",
+				Error:  err.Error(),
+			})
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		writeJSON(w, http.StatusCreated, APIResponse{
+			Status: "success",
+		})
 
 	case http.MethodGet:
-
 		items, err := h.svc.List()
 		if err != nil {
-			http.Error(w, err.Error(), 500)
+			writeJSON(w, 500, APIResponse{
+				Status: "error",
+				Error:  err.Error(),
+			})
 			return
 		}
-		json.NewEncoder(w).Encode(items)
+
+		writeJSON(w, 200, APIResponse{
+			Status: "success",
+			Data:   items,
+		})
 
 	default:
-		http.Error(w, "method not allowed", 405)
+		writeJSON(w, 405, APIResponse{
+			Status: "error",
+			Error:  "method not allowed",
+		})
 	}
 }
