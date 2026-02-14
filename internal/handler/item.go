@@ -15,20 +15,34 @@ func NewItemHandler(s *service.ItemService) *ItemHandler {
 }
 
 func (h *ItemHandler) Items(w http.ResponseWriter, r *http.Request) {
+
 	switch r.Method {
+
 	case http.MethodPost:
-		var data struct {
-			Name string `json:"name"`
+
+		name := r.URL.Query().Get("name")
+		if name == "" {
+			http.Error(w, "missing name", 400)
+			return
 		}
-		json.NewDecoder(r.Body).Decode(&data)
-		item := h.svc.CreateItem(data.Name)
-		json.NewEncoder(w).Encode(item)
+
+		if err := h.svc.Add(name); err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
 
 	case http.MethodGet:
-		items := h.svc.ListItems()
+
+		items, err := h.svc.List()
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
 		json.NewEncoder(w).Encode(items)
 
 	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		http.Error(w, "method not allowed", 405)
 	}
 }
