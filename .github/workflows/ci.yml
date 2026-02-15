@@ -25,11 +25,11 @@ jobs:
               run: go mod tidy 
 
             - name: Build Go app
-              run: go build ./cmd
+              run: go build -o app ./cmd
 
             - name: Build Docker image
               run: docker build -f docker/Dockerfile -t cloud-api .
 
             - name: Docker image check
               run: docker images
-              
+
