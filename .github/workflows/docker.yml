@@ -35,5 +35,23 @@ jobs:
           script: |
             docker stop cloud-api || true
             docker rm cloud-api || true
+            docker network create app-net || true
             docker pull naqua/cloud-go-app:latest
-            docker run -d -p 8081:8081 --name cloud-api naqua/cloud-go-app:latest
+
+            docker run -d \
+              --name postgres \
+              --network app-net \
+              -e POSTGRES_USER=postgres \
+              -e POSTGRES_PASSWORD=postgres \
+              -e POSTGRES_DB=appdb \
+               postgres:16
+            
+            sleep 10
+
+            docker run -d \
+             --name cloud-api \
+             --network app-net \
+             -p 8081:8081 \
+             -e DB_CONN="postgres://postgres:postgres@postgres:5432/appdb?sslmode=disable" \
+            naqua/cloud-go-app:latest
+           
