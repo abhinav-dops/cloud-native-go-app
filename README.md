@@ -75,16 +75,36 @@ Client Request → HTTP Handler (API Layer) → Service Layer (Business Logic) �
 
 ---
 
+## Required GitHub Secrets
+
+- DOCKER_USERNAME
+- DOCKER_PASSWORD
+- EC2_HOST
+- EC2_USER
+- EC2_SSH_KEY
+  
+---
+
 ## Local Development Setup
 
 - Clone repo
-  git clone https://github.com/<your-username>/cloud-native-go-app.git
-  cd cloud-native-go-app
+  - git clone https://github.com/<your-username>/cloud-native-go-app.git
+    cd cloud-native-go-app
 
 - Run with Docker Compose
-  docker compose up --build
+  - docker compose up --build
 
 - Test Api
-  http://localhost:8081/items
+  - http://localhost:8081/items
+    
+---
 
+## Learning Outcomes
 
+This project helped build practical experience with:
+
+- Backend system design
+- DevOps pipelines
+- Cloud deployment workflows
+- Docker-based architecture
+- Production infrastructure concepts
