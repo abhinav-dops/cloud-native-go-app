@@ -1,4 +1,4 @@
-# Cloud-Native Go App — Production CI/CD Pipeline
+# Cloud-Native Go App - Production CI/CD Pipeline
 
 A production-style cloud-native backend application built with **Go**, containerized using **Docker**, and deployed automatically to **AWS EC2** using **GitHub Actions CI/CD**.
 
