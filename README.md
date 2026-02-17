@@ -38,6 +38,25 @@ Client Request → HTTP Handler (API Layer) → Service Layer (Business Logic) �
 
 ---
 
+## CI/CD Pipeline
+
+This project includes a production-style GitHub Actions pipeline.
+
+- CI Stage
+  - Install Go dependencies
+  - Build application
+  - Build Docker image
+  - Verify container build
+
+- CD Stage
+  - Push Docker image to DockerHub
+  - SSH into AWS EC2
+  - Pull latest image
+  - Restart containers
+  - Deploy application automatically
+
+---
+
 ## Features
 
 - REST API built with Go
