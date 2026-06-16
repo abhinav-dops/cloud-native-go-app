@@ -1,0 +1,145 @@
+# =========================
+
+# Go Build Artifacts
+
+# =========================
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/app
+
+# Binary output
+
+bin/
+build/
+dist/
+
+# =========================
+
+# Go Workspace / Modules
+
+# =========================
+
+vendor/
+
+# Optional (keep go.sum tracked normally)
+
+# go.sum
+
+# =========================
+
+# Environment Files
+
+# =========================
+
+.env
+.env.local
+.env.production
+.env.development
+
+# =========================
+
+# IDE / Editor Files
+
+# =========================
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+
+# OS Generated Files
+
+# =========================
+
+.DS_Store
+Thumbs.db
+
+# =========================
+
+# Logs
+
+# =========================
+
+*.log
+logs/
+nohup.out
+
+# =========================
+
+# Docker
+
+# =========================
+
+docker-compose.override.yml
+*.tar
+
+# Docker volumes (local)
+
+pgdata/
+
+# =========================
+
+# AWS / SSH Keys
+
+# =========================
+
+*.pem
+*.key
+id_rsa
+id_rsa.pub
+
+# =========================
+
+# Terraform (future if added)
+
+# =========================
+
+*.tfstate
+*.tfstate.*
+.terraform/
+terraform.tfvars
+
+# =========================
+
+# Coverage / Testing
+
+# =========================
+
+coverage.out
+coverage.html
+
+# =========================
+
+# Temporary Files
+
+# =========================
+
+tmp/
+temp/
+
+# =========================
+
+# Secrets / Credentials
+
+# =========================
+
+secrets.json
+credentials.json
+config.local.json
+
+# =========================
+
+# Misc
+
+# =========================
+
+*.bak
+*.cache
